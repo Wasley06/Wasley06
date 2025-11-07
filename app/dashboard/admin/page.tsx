@@ -53,7 +53,12 @@ export default async function AdminDashboardPage() {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <form action="/auth/signout" method="post">
-              <Button variant="outline">Sign Out</Button>
+              <Button
+                variant="outline"
+                className="border-[rgb(220,53,69)] text-[rgb(220,53,69)] hover:bg-[rgb(220,53,69)] hover:text-white hover:scale-105 hover:shadow-md transition-all duration-200 bg-transparent"
+              >
+                Sign Out
+              </Button>
             </form>
           </div>
         </div>

@@ -127,7 +127,11 @@ export function DevDashboardLayout({ profile, admins }: DevDashboardLayoutProps)
               <ThemeToggle />
             </div>
             <form action="/auth/signout" method="post">
-              <Button variant="outline" size="sm" className="w-full bg-transparent">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full bg-transparent border-[rgb(220,53,69)] text-[rgb(220,53,69)] hover:bg-[rgb(220,53,69)] hover:text-white hover:scale-105 hover:shadow-md transition-all duration-200"
+              >
                 Sign Out
               </Button>
             </form>

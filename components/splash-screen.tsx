@@ -37,11 +37,12 @@ export function SplashScreen() {
 
   return (
     <div
-      className={`fixed inset-0 z-[9999] flex items-center justify-center bg-gradient-to-br from-primary via-secondary to-accent transition-opacity duration-1000 ${
+      className={`fixed inset-0 z-[9999] flex items-center justify-center transition-opacity duration-1000 ${
         isAnimating ? "opacity-100" : "opacity-0"
       }`}
     >
-      <div className="absolute inset-0 bg-[url('/islamic-pattern-gold.jpg')] opacity-10" />
+      <div className="absolute inset-0 bg-[url('/islamic-pattern-gold.jpg')] bg-cover bg-center opacity-20" />
+      <div className="absolute inset-0 bg-gradient-to-br from-primary/80 via-secondary/70 to-accent/80" />
 
       <div className="relative flex flex-col items-center gap-8 px-4">
         {/* Flags Container */}

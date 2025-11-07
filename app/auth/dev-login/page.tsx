@@ -102,7 +102,11 @@ export default function DevLoginPage() {
                       {error}
                     </div>
                   )}
-                  <Button type="submit" className="w-full bg-primary hover:bg-primary/90" disabled={isLoading}>
+                  <Button
+                    type="submit"
+                    className="w-full bg-[rgb(255,193,7)] hover:bg-[rgb(230,173,6)] dark:bg-[rgb(255,193,7)] dark:hover:bg-[rgb(230,173,6)] text-gray-900 font-semibold hover:scale-105 hover:shadow-md transition-all duration-200"
+                    disabled={isLoading}
+                  >
                     {isLoading ? "Signing in..." : "Access Dev Dashboard"}
                   </Button>
                 </div>

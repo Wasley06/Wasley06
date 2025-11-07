@@ -141,7 +141,7 @@ export default function SignUpPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="title">
-                        Title <span className="text-destructive">*</span>
+                        Title <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Select value={formData.title} onValueChange={(value) => handleChange("title", value)} required>
                         <SelectTrigger id="title">
@@ -159,7 +159,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="gender">
-                        Gender <span className="text-destructive">*</span>
+                        Gender <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Select value={formData.gender} onValueChange={(value) => handleChange("gender", value)} required>
                         <SelectTrigger id="gender">
@@ -175,7 +175,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="firstName">
-                        First Name <span className="text-destructive">*</span>
+                        First Name <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Input
                         id="firstName"
@@ -188,7 +188,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="surname">
-                        Surname <span className="text-destructive">*</span>
+                        Surname <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Input
                         id="surname"
@@ -201,7 +201,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="yearOfBirth">
-                        Year of Birth <span className="text-destructive">*</span>
+                        Year of Birth <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Select
                         value={formData.yearOfBirth}
@@ -223,7 +223,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="region">
-                        Region <span className="text-destructive">*</span>
+                        Region <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Select value={formData.region} onValueChange={(value) => handleChange("region", value)} required>
                         <SelectTrigger id="region">
@@ -253,7 +253,7 @@ export default function SignUpPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="refereeName">
-                        Referee Name <span className="text-destructive">*</span>
+                        Referee Name <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Input
                         id="refereeName"
@@ -266,7 +266,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="refereeMobile">
-                        Referee Mobile Number <span className="text-destructive">*</span>
+                        Referee Mobile Number <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Input
                         id="refereeMobile"
@@ -279,7 +279,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="localAdminName">
-                        Local Admin Name <span className="text-destructive">*</span>
+                        Local Admin Name <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Input
                         id="localAdminName"
@@ -292,7 +292,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="localAdminMobile">
-                        Local Admin Mobile Number <span className="text-destructive">*</span>
+                        Local Admin Mobile Number <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Input
                         id="localAdminMobile"
@@ -311,7 +311,7 @@ export default function SignUpPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="county">
-                        County <span className="text-destructive">*</span>
+                        County <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Input
                         id="county"
@@ -324,7 +324,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="postcode">
-                        Outward Postcode <span className="text-destructive">*</span>
+                        Outward Postcode <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Input
                         id="postcode"
@@ -337,7 +337,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="mobile">
-                        Mobile Number <span className="text-destructive">*</span>
+                        Mobile Number <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Input
                         id="mobile"
@@ -350,7 +350,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="email">
-                        Email <span className="text-destructive">*</span>
+                        Email <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <Input
                         id="email"
@@ -363,7 +363,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="password">
-                        Password <span className="text-destructive">*</span>
+                        Password <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <div className="relative">
                         <Input
@@ -385,7 +385,7 @@ export default function SignUpPage() {
 
                     <div className="space-y-2">
                       <Label htmlFor="confirmPassword">
-                        Confirm Password <span className="text-destructive">*</span>
+                        Confirm Password <span className="text-[rgb(220,53,69)]">*</span>
                       </Label>
                       <div className="relative">
                         <Input
@@ -441,7 +441,7 @@ export default function SignUpPage() {
                     Already have an account?{" "}
                     <Link
                       href="/auth/login"
-                      className="text-primary underline underline-offset-4 hover:text-primary/80 font-medium"
+                      className="text-[rgb(25,135,84)] dark:text-[rgb(40,167,69)] underline underline-offset-4 hover:text-[rgb(20,110,68)] dark:hover:text-[rgb(30,140,55)] font-medium"
                     >
                       Sign In
                     </Link>

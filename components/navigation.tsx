@@ -55,7 +55,7 @@ export function Navigation() {
             </h1>
           </Link>
 
-          <div className="hidden md:flex items-center gap-4 lg:gap-8">
+          <div className="hidden md:flex items-center gap-4 lg:gap-8 ml-auto">
             <button
               onClick={() => scrollToSection("about")}
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
@@ -73,7 +73,7 @@ export function Navigation() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 hover:bg-primary/10 hover:scale-105 transition-all duration-200"
+                className="gap-2 bg-[rgb(13,110,253)] hover:bg-[rgb(10,88,202)] dark:bg-[rgb(13,110,253)] dark:hover:bg-[rgb(10,88,202)] text-white hover:scale-105 hover:shadow-md transition-all duration-200"
               >
                 <Code className="h-4 w-4" />
                 <span className="hidden lg:inline">Dev</span>
@@ -83,7 +83,7 @@ export function Navigation() {
               <Button
                 variant="ghost"
                 size="sm"
-                className="gap-2 hover:bg-primary/10 hover:scale-105 transition-all duration-200"
+                className="gap-2 bg-[rgb(255,193,7)] hover:bg-[rgb(230,173,6)] dark:bg-[rgb(255,193,7)] dark:hover:bg-[rgb(230,173,6)] text-gray-900 hover:scale-105 hover:shadow-md transition-all duration-200"
               >
                 <LogIn className="h-4 w-4" />
                 <span className="hidden lg:inline">Sign In</span>
@@ -92,7 +92,7 @@ export function Navigation() {
             <Link href="/auth/sign-up">
               <Button
                 size="sm"
-                className="rounded-full gap-2 bg-primary hover:bg-primary/90 hover:scale-105 hover:shadow-lg transition-all duration-200"
+                className="rounded-full gap-2 bg-[rgb(25,135,84)] hover:bg-[rgb(20,110,68)] dark:bg-[rgb(40,167,69)] dark:hover:bg-[rgb(30,140,55)] text-white hover:scale-105 hover:shadow-lg transition-all duration-200"
               >
                 <UserPlus className="h-4 w-4" />
                 <span className="hidden lg:inline">Register</span>
@@ -124,25 +124,19 @@ export function Navigation() {
                 <ThemeToggle />
               </div>
               <Link href="/auth/dev-login" className="w-full">
-                <Button
-                  variant="outline"
-                  className="w-full gap-2 bg-transparent justify-center hover:bg-primary/10 hover:border-primary hover:scale-105 transition-all duration-200"
-                >
+                <Button className="w-full gap-2 bg-[rgb(13,110,253)] hover:bg-[rgb(10,88,202)] text-white justify-center hover:scale-105 hover:shadow-md transition-all duration-200">
                   <Code className="h-4 w-4" />
                   Dev Access
                 </Button>
               </Link>
               <Link href="/auth/login" className="w-full">
-                <Button
-                  variant="outline"
-                  className="w-full gap-2 bg-transparent justify-center hover:bg-primary/10 hover:border-primary hover:scale-105 transition-all duration-200"
-                >
+                <Button className="w-full gap-2 bg-[rgb(255,193,7)] hover:bg-[rgb(230,173,6)] text-gray-900 justify-center hover:scale-105 hover:shadow-md transition-all duration-200">
                   <LogIn className="h-4 w-4" />
                   Sign In
                 </Button>
               </Link>
               <Link href="/auth/sign-up" className="w-full">
-                <Button className="w-full gap-2 bg-primary hover:bg-primary/90 justify-center hover:scale-105 hover:shadow-lg transition-all duration-200">
+                <Button className="w-full gap-2 bg-[rgb(25,135,84)] hover:bg-[rgb(20,110,68)] text-white justify-center hover:scale-105 hover:shadow-lg transition-all duration-200">
                   <UserPlus className="h-4 w-4" />
                   Register
                 </Button>
