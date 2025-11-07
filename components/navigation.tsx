@@ -28,9 +28,7 @@ export function Navigation() {
   }
 
   return (
-    <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white dark:bg-gray-950 border-b border-border`}
-    >
+    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white dark:bg-gray-950`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           <Link
@@ -53,33 +51,29 @@ export function Navigation() {
             </h1>
           </Link>
 
-          <div className="hidden md:flex items-center gap-4 lg:gap-24 ml-auto">
+          <div className="hidden md:flex items-center gap-3 ml-auto">
             <button
               onClick={() => scrollToSection("about")}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 px-3 py-2 rounded-md transition-all duration-200 whitespace-nowrap"
             >
               About
             </button>
             <button
               onClick={() => scrollToSection("contact")}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted/50 px-3 py-2 rounded-md transition-all duration-200 whitespace-nowrap"
             >
               Contact
             </button>
-            <ThemeToggle />
+            <div className="hover:bg-muted/50 rounded-md transition-all duration-200">
+              <ThemeToggle />
+            </div>
             <Link href="/auth/dev-login">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="gap-2 bg-[rgb(13,110,253)] hover:bg-[rgb(10,88,202)] dark:bg-[rgb(13,110,253)] dark:hover:bg-[rgb(10,88,202)] text-white hover:scale-105 hover:shadow-md transition-all duration-200"
-              >
-                <Code className="h-4 w-4" />
-                <span className="hidden lg:inline">Dev</span>
+              <Button variant="ghost" size="icon" className="hover:bg-muted/50 transition-all duration-200">
+                <Code className="h-5 w-5" />
               </Button>
             </Link>
             <Link href="/auth/login">
               <Button
-                variant="ghost"
                 size="sm"
                 className="gap-2 bg-[rgb(255,193,7)] hover:bg-[rgb(230,173,6)] dark:bg-[rgb(255,193,7)] dark:hover:bg-[rgb(230,173,6)] text-gray-900 hover:scale-105 hover:shadow-md transition-all duration-200"
               >
@@ -104,7 +98,7 @@ export function Navigation() {
         </div>
 
         {isMobileMenuOpen && (
-          <div className="md:hidden py-4 sm:py-6 border-t border-border">
+          <div className="md:hidden py-4 sm:py-6">
             <div className="flex flex-col gap-3 sm:gap-4">
               <button
                 onClick={() => scrollToSection("about")}
@@ -122,7 +116,7 @@ export function Navigation() {
                 <ThemeToggle />
               </div>
               <Link href="/auth/dev-login" className="w-full">
-                <Button className="w-full gap-2 bg-[rgb(13,110,253)] hover:bg-[rgb(10,88,202)] text-white justify-center hover:scale-105 hover:shadow-md transition-all duration-200">
+                <Button className="w-full gap-2 bg-transparent" variant="outline">
                   <Code className="h-4 w-4" />
                   Dev Access
                 </Button>

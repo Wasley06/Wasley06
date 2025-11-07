@@ -17,12 +17,12 @@ export function SplashScreen() {
 
     const fadeTimer = setTimeout(() => {
       setIsAnimating(false)
-    }, 3000) // Reduced from 5000 to 3000
+    }, 3000)
 
     const removeTimer = setTimeout(() => {
       setIsVisible(false)
       sessionStorage.setItem("hasSeenSplash", "true")
-    }, 3500) // Reduced from 6000 to 3500
+    }, 3500)
 
     return () => {
       clearTimeout(fadeTimer)
@@ -38,7 +38,7 @@ export function SplashScreen() {
         isAnimating ? "opacity-100" : "opacity-0"
       }`}
     >
-      <div className="absolute inset-0 bg-[url('/islamic-pattern-gold.jpg')] bg-cover bg-center opacity-10" />
+      <div className="absolute inset-0 bg-[url('/islamic-pattern-gold.jpg')] bg-cover bg-center opacity-15" />
       <div className="absolute inset-0 bg-gradient-to-br from-[#16a34a] via-[#0ea5e9] to-[#eab308]" />
 
       <div className="relative flex flex-col items-center gap-8 px-4">

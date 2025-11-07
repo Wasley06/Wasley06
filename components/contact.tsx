@@ -17,8 +17,8 @@ export function Contact() {
         <div className="grid sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
           <Card className="p-8 bg-card border border-border hover:shadow-lg transition-shadow">
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-16 h-16 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center flex-shrink-0">
-                <Phone className="h-7 w-7 text-yellow-600 dark:text-yellow-500" />
+              <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center flex-shrink-0">
+                <Phone className="h-5 w-5 text-yellow-600 dark:text-yellow-500" />
               </div>
               <div>
                 <h3 className="text-2xl font-bold mb-2 text-foreground">Phone</h3>
@@ -27,7 +27,7 @@ export function Contact() {
             </div>
             <a
               href="tel:+447846821186"
-              className="inline-block px-6 py-3 rounded-full border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-foreground font-medium"
+              className="inline-block px-6 py-3 rounded-full border-2 border-border hover:border-[rgb(25,135,84)] hover:bg-[rgb(25,135,84)]/10 hover:scale-105 transition-all duration-200 text-foreground font-medium"
             >
               +44 7846 821186
             </a>
@@ -35,8 +35,8 @@ export function Contact() {
 
           <Card className="p-8 bg-card border border-border hover:shadow-lg transition-shadow">
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-16 h-16 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center flex-shrink-0">
-                <Mail className="h-7 w-7 text-yellow-600 dark:text-yellow-500" />
+              <div className="w-12 h-12 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center flex-shrink-0">
+                <Mail className="h-5 w-5 text-yellow-600 dark:text-yellow-500" />
               </div>
               <div>
                 <h3 className="text-2xl font-bold mb-2 text-foreground">Email</h3>
@@ -46,13 +46,13 @@ export function Contact() {
             <div className="space-y-3">
               <a
                 href="mailto:info@jumuiyawaislamuk.com"
-                className="block px-6 py-3 rounded-full border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-foreground font-medium text-center truncate"
+                className="block px-6 py-3 rounded-full border-2 border-border hover:border-[rgb(25,135,84)] hover:bg-[rgb(25,135,84)]/10 hover:scale-105 transition-all duration-200 text-foreground font-medium text-center truncate"
               >
                 info@jumuiyawaislamuk.com
               </a>
               <a
                 href="mailto:support@jumuiyawaislamuk.com"
-                className="block px-6 py-3 rounded-full border-2 border-border hover:border-primary hover:bg-primary/5 transition-all text-foreground font-medium text-center truncate"
+                className="block px-6 py-3 rounded-full border-2 border-border hover:border-[rgb(25,135,84)] hover:bg-[rgb(25,135,84)]/10 hover:scale-105 transition-all duration-200 text-foreground font-medium text-center truncate"
               >
                 support@jumuiyawaislamuk.com
               </a>

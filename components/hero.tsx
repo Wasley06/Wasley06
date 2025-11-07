@@ -20,11 +20,11 @@ export function Hero() {
           src="/community-flags.png"
           alt="Community"
           fill
-          className="object-cover object-center opacity-[0.03] dark:opacity-[0.005]"
+          className="object-cover object-center opacity-[0.15] dark:opacity-[0.08]"
           priority
           sizes="100vw"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-background/98 via-background/95 to-background/90 dark:from-background/95 dark:via-background/90 dark:to-background/85" />
+        <div className="absolute inset-0 bg-gradient-to-br from-background/90 via-background/85 to-background/80 dark:from-background/90 dark:via-background/85 dark:to-background/80" />
       </div>
 
       <Link
@@ -47,7 +47,7 @@ export function Hero() {
         <Image src="/uk-flag.png" alt="UK Flag" fill className="object-contain" />
       </Link>
 
-      <div className="absolute inset-0 bg-[url('/islamic-pattern-gold.jpg')] opacity-[0.03] dark:opacity-[0.01]" />
+      <div className="absolute inset-0 bg-[url('/islamic-pattern-gold.jpg')] opacity-[0.04] dark:opacity-[0.02]" />
 
       <div
         className={`relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-32 text-center transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
@@ -88,16 +88,16 @@ export function Hero() {
           <div className="pt-6 sm:pt-8 px-4">
             <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">Members get access to:</p>
             <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-xs sm:text-sm">
-              <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[rgb(25,135,84)]/10 dark:bg-[rgb(40,167,69)]/10 text-[rgb(25,135,84)] dark:text-[rgb(40,167,69)] font-medium">
+              <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[rgb(25,135,84)]/10 dark:bg-[rgb(40,167,69)]/10 text-[rgb(25,135,84)] dark:text-[rgb(40,167,69)] font-medium hover:scale-105 transition-transform cursor-default">
                 Funeral Support
               </span>
-              <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[rgb(13,110,253)]/10 text-[rgb(13,110,253)] font-medium">
+              <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[rgb(13,110,253)]/10 text-[rgb(13,110,253)] font-medium hover:scale-105 transition-transform cursor-default">
                 Repatriation Services
               </span>
-              <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[rgb(255,193,7)]/10 text-[rgb(184,134,11)] dark:text-[rgb(255,193,7)] font-medium">
+              <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[rgb(255,193,7)]/10 text-[rgb(184,134,11)] dark:text-[rgb(255,193,7)] font-medium hover:scale-105 transition-transform cursor-default">
                 Financial Assistance
               </span>
-              <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[rgb(25,135,84)]/10 dark:bg-[rgb(40,167,69)]/10 text-[rgb(25,135,84)] dark:text-[rgb(40,167,69)] font-medium">
+              <span className="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full bg-[rgb(25,135,84)]/10 dark:bg-[rgb(40,167,69)]/10 text-[rgb(25,135,84)] dark:text-[rgb(40,167,69)] font-medium hover:scale-105 transition-transform cursor-default">
                 Community Guidance
               </span>
             </div>
