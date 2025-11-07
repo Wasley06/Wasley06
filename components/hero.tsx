@@ -20,7 +20,7 @@ export function Hero() {
           src="/community-flags.png"
           alt="Community"
           fill
-          className="object-cover object-center opacity-[0.12] dark:opacity-[0.02]"
+          className="object-cover object-center opacity-[0.03] dark:opacity-[0.005]"
           priority
           sizes="100vw"
         />

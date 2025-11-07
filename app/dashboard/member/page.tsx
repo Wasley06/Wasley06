@@ -7,6 +7,7 @@ import { getUserWithRole } from "@/lib/auth-helpers"
 import { Bell } from "lucide-react"
 import Image from "next/image"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { getTimeBasedGreeting, formatUserName } from "@/lib/greeting-utils"
 
 export default async function MemberDashboardPage() {
   const { user, profile, role } = await getUserWithRole()
@@ -21,7 +22,6 @@ export default async function MemberDashboardPage() {
 
   const supabase = await createClient()
 
-  // Fetch announcements
   const { data: announcements } = await supabase
     .from("announcements")
     .select("*")
@@ -29,8 +29,11 @@ export default async function MemberDashboardPage() {
     .order("created_at", { ascending: false })
     .limit(5)
 
+  const greeting = getTimeBasedGreeting()
+  const userName = formatUserName(profile?.title, profile?.first_name, profile?.surname)
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/5 via-secondary/5 to-accent/5">
+    <div className="min-h-screen bg-background">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
@@ -45,7 +48,9 @@ export default async function MemberDashboardPage() {
                 <Image src="/uk-flag.png" alt="UK Flag" fill className="object-contain" />
               </div>
             </div>
-            <h1 className="text-3xl font-semibold">Greetings {profile?.first_name || "Member"}</h1>
+            <h1 className="text-2xl sm:text-3xl font-normal text-foreground">
+              {greeting}, <span className="font-bold text-[rgb(25,135,84)] dark:text-[rgb(40,167,69)]">{userName}</span>
+            </h1>
           </div>
           <div className="flex items-center gap-2">
             <ThemeToggle />
@@ -60,7 +65,7 @@ export default async function MemberDashboardPage() {
           </div>
         </div>
 
-        <Card className="border-2 mb-8">
+        <Card className="border-2 mb-8 bg-card">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Bell className="h-5 w-5 text-primary" />
@@ -88,7 +93,7 @@ export default async function MemberDashboardPage() {
         </Card>
 
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          <Card className="border-2 border-primary/20">
+          <Card className="border-2 border-primary/20 bg-card">
             <CardHeader>
               <CardTitle className="text-primary">Welcome!</CardTitle>
               <CardDescription>You're part of the Jumuiya ya Waislamu UK community</CardDescription>
@@ -99,7 +104,7 @@ export default async function MemberDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-secondary/20">
+          <Card className="border-2 border-secondary/20 bg-card">
             <CardHeader>
               <CardTitle className="text-secondary">Community Support</CardTitle>
               <CardDescription>Access resources and connect with members</CardDescription>
@@ -109,7 +114,7 @@ export default async function MemberDashboardPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-2 border-accent/20">
+          <Card className="border-2 border-accent/20 bg-card">
             <CardHeader>
               <CardTitle className="text-accent-foreground">Get Help</CardTitle>
               <CardDescription>Contact us for support and assistance</CardDescription>

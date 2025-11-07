@@ -17,8 +17,8 @@ export function Contact() {
         <div className="grid sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto">
           <Card className="p-8 bg-card border border-border hover:shadow-lg transition-shadow">
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-14 h-14 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center flex-shrink-0">
-                <Phone className="h-6 w-6 text-yellow-600 dark:text-yellow-500" />
+              <div className="w-16 h-16 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center flex-shrink-0">
+                <Phone className="h-7 w-7 text-yellow-600 dark:text-yellow-500" />
               </div>
               <div>
                 <h3 className="text-2xl font-bold mb-2 text-foreground">Phone</h3>
@@ -35,8 +35,8 @@ export function Contact() {
 
           <Card className="p-8 bg-card border border-border hover:shadow-lg transition-shadow">
             <div className="flex items-start gap-4 mb-6">
-              <div className="w-14 h-14 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center flex-shrink-0">
-                <Mail className="h-6 w-6 text-yellow-600 dark:text-yellow-500" />
+              <div className="w-16 h-16 rounded-full bg-yellow-100 dark:bg-yellow-900/20 flex items-center justify-center flex-shrink-0">
+                <Mail className="h-7 w-7 text-yellow-600 dark:text-yellow-500" />
               </div>
               <div>
                 <h3 className="text-2xl font-bold mb-2 text-foreground">Email</h3>

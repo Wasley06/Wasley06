@@ -29,9 +29,7 @@ export function Navigation() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-background border-b border-border" : "bg-background"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 bg-white dark:bg-gray-950 border-b border-border`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
@@ -55,7 +53,7 @@ export function Navigation() {
             </h1>
           </Link>
 
-          <div className="hidden md:flex items-center gap-4 lg:gap-8 ml-auto">
+          <div className="hidden md:flex items-center gap-4 lg:gap-24 ml-auto">
             <button
               onClick={() => scrollToSection("about")}
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors whitespace-nowrap"
