@@ -64,9 +64,9 @@ export function Navigation() {
             >
               Contact
             </button>
-            <div className="hover:bg-muted/50 rounded-md transition-all duration-200">
+            <button className="hover:bg-muted/50 rounded-md transition-all duration-200">
               <ThemeToggle />
-            </div>
+            </button>
             <Link href="/auth/dev-login">
               <Button variant="ghost" size="icon" className="hover:bg-muted/50 transition-all duration-200">
                 <Code className="h-5 w-5" />
