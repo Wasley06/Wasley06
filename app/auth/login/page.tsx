@@ -84,11 +84,19 @@ export default function LoginPage() {
                 {error && <p className="text-sm text-destructive">{error}</p>}
                 <Button
                   type="submit"
-                  className="w-full h-12 bg-[rgb(25,135,84)] hover:bg-[rgb(20,110,68)] dark:bg-[rgb(40,167,69)] dark:hover:bg-[rgb(30,140,55)] text-white font-semibold text-base"
+                  className="w-full h-12 bg-[rgb(255,193,7)] hover:bg-[rgb(230,173,6)] dark:bg-[rgb(255,193,7)] dark:hover:bg-[rgb(230,173,6)] text-gray-900 font-semibold text-base hover:scale-105 hover:shadow-lg transition-all duration-200"
                   disabled={isLoading}
                 >
                   {isLoading ? "Signing in..." : "Sign In"}
                 </Button>
+              </div>
+              <div className="mt-4 text-center text-sm">
+                <Link
+                  href="/auth/forgot-password"
+                  className="text-[rgb(25,135,84)] dark:text-[rgb(40,167,69)] hover:text-[rgb(20,110,68)] dark:hover:text-[rgb(30,140,55)] font-medium"
+                >
+                  Forgot your password?
+                </Link>
               </div>
               <div className="mt-6 text-center text-sm">
                 Don&apos;t have an account?{" "}
