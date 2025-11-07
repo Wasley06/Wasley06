@@ -38,15 +38,16 @@ export function SplashScreen() {
         isAnimating ? "opacity-100" : "opacity-0"
       }`}
     >
+      <div className="absolute inset-0 bg-gradient-to-r from-[#16a085] via-[#2980b9] to-[#f39c12]" />
+
       <div
-        className="absolute inset-0 bg-repeat opacity-30"
+        className="absolute inset-0"
         style={{
-          backgroundImage: "url('/islamic-pattern-gold.jpg')",
+          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'%3E%3Cg fill='none' stroke='%23000000' strokeWidth='1' opacity='0.15'%3E%3Cpath d='M100 0 L100 200 M0 100 L200 100'/%3E%3Ccircle cx='100' cy='100' r='80'/%3E%3Cpath d='M100 20 L180 100 L100 180 L20 100 Z'/%3E%3Ccircle cx='100' cy='100' r='40'/%3E%3Cpath d='M60 60 L140 60 L140 140 L60 140 Z'/%3E%3C/g%3E%3C/svg%3E")`,
           backgroundSize: "200px 200px",
+          backgroundRepeat: "repeat",
         }}
       />
-
-      <div className="absolute inset-0 bg-gradient-to-r from-[#16a085] via-[#2980b9] to-[#f39c12]" />
 
       <div className="relative flex flex-col items-center gap-8 px-4">
         <div className="flex items-center justify-center gap-8 md:gap-12">

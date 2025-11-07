@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { ThemeToggle } from "@/components/theme-toggle"
 import {
@@ -37,6 +38,7 @@ type Profile = {
   surname: string | null
   role: string
   created_at: string
+  title?: string
 }
 
 type DevDashboardLayoutProps = {
@@ -121,10 +123,18 @@ export function DevDashboardLayout({ profile, admins }: DevDashboardLayoutProps)
           <div className="p-4 border-t border-sidebar-border">
             <div className="flex items-center justify-between mb-3">
               <div className="text-sm text-sidebar-foreground">
-                <p className="font-medium">{profile?.first_name || "Developer"}</p>
-                <p className="text-xs text-muted-foreground">Dev Access</p>
+                <div className="flex items-center gap-2">
+                  <p className="font-medium">
+                    {profile?.title ? `${profile.title}. ` : ""}
+                    <span className="font-bold text-[rgb(25,135,84)] dark:text-[rgb(40,167,69)]">
+                      {profile?.first_name || "Developer"}
+                    </span>
+                  </p>
+                  <Badge className="bg-[rgb(255,193,7)] text-gray-900 hover:bg-[rgb(230,173,6)] text-xs">Dev</Badge>
+                </div>
+                <p className="text-xs text-muted-foreground">Developer Access</p>
               </div>
-              <ThemeToggle />
+              <ThemeToggle variant="yellow" />
             </div>
             <form action="/auth/signout" method="post">
               <Button
@@ -140,16 +150,27 @@ export function DevDashboardLayout({ profile, admins }: DevDashboardLayoutProps)
       </aside>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col overflow-hidden bg-background">
         {/* Top Bar */}
         <header className="flex items-center justify-between px-6 py-4 bg-card border-b border-border">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setSidebarOpen(true)}>
               <Menu className="h-5 w-5" />
             </Button>
-            <div>
-              <h1 className="text-2xl font-semibold">Greetings {profile?.first_name || "Developer"} (Dev)</h1>
-              <p className="text-sm text-muted-foreground">JUMUIYA YA WAISLAM UK - Developer Console</p>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-semibold text-foreground">
+                {new Date().getHours() >= 5 && new Date().getHours() < 12
+                  ? "Good Morning"
+                  : new Date().getHours() >= 12 && new Date().getHours() < 17
+                    ? "Good Afternoon"
+                    : "Good Evening"}
+                ,{" "}
+                <span className="font-bold text-[rgb(25,135,84)] dark:text-[rgb(40,167,69)]">
+                  {profile?.title ? `${profile.title}. ` : ""}
+                  {profile?.first_name || "Developer"}
+                </span>
+              </h1>
+              <Badge className="bg-[rgb(255,193,7)] text-gray-900 hover:bg-[rgb(230,173,6)]">Developer</Badge>
             </div>
           </div>
         </header>

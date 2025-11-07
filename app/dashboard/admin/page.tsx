@@ -61,7 +61,7 @@ export default async function AdminDashboardPage() {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <ThemeToggle />
+            <ThemeToggle variant="yellow" />
             <form action="/auth/signout" method="post">
               <Button
                 variant="outline"
