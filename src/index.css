@@ -1,0 +1,312 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+@import 'tailwindcss';
+
+/* ─── Fabegon Brand ─── */
+/* Green: #1B6B2E  Yellow: #F9C42A  Blue: #1565C0  Red: #C62828 */
+
+/* ─── Dark (default) ─── */
+:root {
+  color-scheme: dark;
+  --background:  #080E0A;
+  --foreground:  #E8F5E9;
+  --card:        #0F1A11;
+  --card-2:      #162019;
+  --card-foreground: #E8F5E9;
+  --primary:     #2E7D32;
+  --primary-hover: #388E3C;
+  --primary-foreground: #ffffff;
+  --secondary:   #1A2B1C;
+  --secondary-foreground: #A5C8A8;
+  --muted:       #1E2F20;
+  --muted-foreground: #6B8A6E;
+  --accent:      #F9C42A;
+  --accent-foreground: #1A2B1C;
+  --accent2:     #1565C0;
+  --accent2-foreground: #ffffff;
+  --border:      rgba(255,255,255,0.07);
+  --border-strong: rgba(255,255,255,0.12);
+  --ring:        #2E7D32;
+  --radius:      10px;
+  --success:     #4CAF50;
+  --warning:     #F9C42A;
+  --danger:      #EF5350;
+  --info:        #42A5F5;
+  --sidebar:     #060D08;
+  --sidebar-border: rgba(255,255,255,0.05);
+  --topbar:      #0A1510;
+  --glass:       rgba(15,26,17,0.85);
+  --glass-border: rgba(46,125,50,0.25);
+  --shadow: 0 8px 32px rgba(0,0,0,0.45);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+/* ─── Light ─── */
+[data-theme="light"] {
+  color-scheme: light;
+  --background:  #F0F7F1;
+  --foreground:  #0A1F0E;
+  --card:        #FFFFFF;
+  --card-2:      #F5FBF5;
+  --card-foreground: #0A1F0E;
+  --primary:     #1B6B2E;
+  --primary-hover: #2E7D32;
+  --primary-foreground: #ffffff;
+  --secondary:   #E8F5E9;
+  --secondary-foreground: #2D5C33;
+  --muted:       #EDF7EE;
+  --muted-foreground: #5A8060;
+  --accent:      #E65100;
+  --accent-foreground: #ffffff;
+  --accent2:     #1565C0;
+  --accent2-foreground: #ffffff;
+  --border:      rgba(0,0,0,0.09);
+  --border-strong: rgba(0,0,0,0.15);
+  --ring:        #1B6B2E;
+  --success:     #2E7D32;
+  --warning:     #E65100;
+  --danger:      #C62828;
+  --info:        #1565C0;
+  --sidebar:     #1B6B2E;
+  --sidebar-border: rgba(255,255,255,0.15);
+  --topbar:      #FFFFFF;
+  --glass:       rgba(255,255,255,0.88);
+  --glass-border: rgba(27,107,46,0.2);
+  --shadow: 0 8px 32px rgba(0,0,0,0.12);
+  --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+/* ─── Reset ─── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+/* ─── Scrollbars ─── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(46,125,50,0.25) transparent;
+}
+*::-webkit-scrollbar { width: 4px; height: 4px; }
+*::-webkit-scrollbar-track { background: transparent; }
+*::-webkit-scrollbar-thumb { background: rgba(46,125,50,0.25); border-radius: 2px; }
+*::-webkit-scrollbar-thumb:hover { background: rgba(46,125,50,0.45); }
+
+/* ─── Animations ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.6); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes pulse-ring {
+  0%   { transform: scale(0.9); opacity: 0.6; }
+  50%  { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0.6; }
+}
+@keyframes progress-fill {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes modal-in {
+  from { opacity: 0; transform: scale(0.94) translateY(12px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.animate-in        { animation: fadeUp 0.3s ease both; }
+.animate-fade      { animation: fadeIn 0.3s ease both; }
+.animate-scale-in  { animation: scaleIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+.animate-modal     { animation: modal-in 0.25s cubic-bezier(0.34,1.2,0.64,1) both; }
+.pulse-dot         { animation: pulse-dot 1.5s ease-in-out infinite; }
+
+/* ─── Floating island sub-form ─── */
+.island {
+  background: var(--glass);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+}
+
+/* ─── Card base ─── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* ─── Input base ─── */
+.input-base {
+  background: var(--secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--foreground);
+  font-family: inherit;
+  font-size: 14px;
+  padding: 9px 13px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.15s;
+}
+.input-base:focus { border-color: var(--primary); }
+.input-base::placeholder { color: var(--muted-foreground); }
+
+/* ─── Global select color-scheme: always dark unless light mode ─── */
+select { color-scheme: dark; }
+[data-theme="light"] select { color-scheme: light; }
+
+/* ─── Select / dropdown dark-theme fix ─── */
+/* Force native dropdown popup to match dark theme (Chrome/Edge/Firefox) */
+select.input-base,
+select.input-base-raw {
+  color-scheme: dark;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239CA3AF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+select.input-base option,
+select.input-base-raw option {
+  background: #111827;
+  color: #ffffff;
+  font-weight: 500;
+}
+select.input-base option:checked,
+select.input-base-raw option:checked {
+  background: #2563EB;
+  color: #ffffff;
+}
+select.input-base option:hover,
+select.input-base-raw option:hover {
+  background: #1F2937;
+  color: #ffffff;
+}
+select.input-base option:disabled,
+select.input-base-raw option:disabled {
+  color: #9CA3AF;
+}
+
+/* Global: every bare select in ERP gets dark styling */
+.modal-overlay select,
+.island select {
+  color-scheme: dark;
+}
+.modal-overlay select option,
+.island select option {
+  background: #111827;
+  color: #ffffff;
+  font-weight: 500;
+}
+.modal-overlay select option:checked,
+.island select option:checked {
+  background: #2563EB;
+  color: #ffffff;
+}
+
+/* ─── Button base ─── */
+.btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 8px; font-size: 13px; font-weight: 500; font-family: inherit; cursor: pointer; border: none; transition: all 0.15s; }
+.btn-primary { background: var(--primary); color: var(--primary-foreground); }
+.btn-primary:hover { background: var(--primary-hover); }
+.btn-secondary { background: var(--secondary); color: var(--secondary-foreground); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--primary); }
+.btn-ghost { background: transparent; color: var(--muted-foreground); border: 1px solid var(--border); }
+.btn-ghost:hover { background: var(--secondary); color: var(--foreground); }
+.btn-danger { background: var(--danger); color: white; }
+
+/* ─── Modal overlay ─── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center; padding: 24px;
+  animation: fadeIn 0.2s ease;
+}
+
+/* ─── Sidebar light mode overrides ─── */
+[data-theme="light"] .sidebar-nav-item { color: rgba(255,255,255,0.75); }
+[data-theme="light"] .sidebar-nav-item:hover { background: rgba(255,255,255,0.12); color: white; }
+[data-theme="light"] .sidebar-nav-item.active { background: rgba(255,255,255,0.18); color: white; }
+[data-theme="light"] .sidebar-user-text { color: rgba(255,255,255,0.9); }
+[data-theme="light"] .sidebar-muted { color: rgba(255,255,255,0.55); }
+
+/* ─── Light mode global text fixes ─── */
+/* Swap all hard-coded white text to foreground token */
+[data-theme="light"] .text-white { color: var(--foreground) !important; }
+
+/* Cards, tables */
+[data-theme="light"] .card { color: var(--foreground); }
+
+/* Inputs */
+[data-theme="light"] .input-base {
+  background: #ffffff;
+  border-color: rgba(0,0,0,0.12);
+  color: var(--foreground);
+}
+[data-theme="light"] .input-base option { background: #ffffff; color: var(--foreground); }
+
+/* Modal overlay tint */
+[data-theme="light"] .modal-overlay { background: rgba(0,0,0,0.35); }
+[data-theme="light"] .island {
+  background: rgba(255,255,255,0.97);
+  border-color: rgba(27,107,46,0.2);
+}
+
+/* Ghost btn */
+[data-theme="light"] .btn-ghost { color: var(--foreground); border-color: var(--border); }
+[data-theme="light"] .btn-ghost:hover { background: var(--secondary); }
+
+/* ─── Notification slide-in panel ─── */
+.notif-panel {
+  position: fixed;
+  top: 60px;
+  right: 0;
+  width: 380px;
+  height: calc(100vh - 60px);
+  background: var(--card);
+  border-left: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: slide-in-right 0.22s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes slide-in-right {
+  from { transform: translateX(100%); opacity: 0; }
+  to   { transform: translateX(0);    opacity: 1; }
+}

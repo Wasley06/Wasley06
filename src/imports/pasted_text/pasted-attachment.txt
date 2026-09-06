@@ -1,0 +1,186 @@
+# Global User Authentication & Cloud Synchronization Prompt
+
+Modify the existing ERP architecture so that users, authentication, permissions, and business data are **cloud-based and globally synchronized**, not stored only on the local device.
+
+## Global Authentication
+
+* User accounts must exist in a centralized database.
+* A user created on one computer must immediately be able to log in from any other authorized computer or mobile device.
+* Authentication must never depend on local storage alone.
+* Credentials must be verified against the central server.
+* Support secure JWT access tokens and refresh tokens.
+* Support secure password hashing.
+* Support password reset.
+* Support email and phone verification if enabled.
+* Support optional Multi-Factor Authentication (MFA).
+* Allow administrators to create, edit, suspend, activate, or delete users from any location.
+
+## Global User Access
+
+When an administrator creates a new user:
+
+* The user should immediately exist in the global database.
+* The account should be accessible from any authorized device.
+* The user should see the same profile, permissions, dashboard, and company data regardless of which device they use.
+* No manual synchronization should be required before the account can be used elsewhere.
+
+## Centralized Database
+
+Store all business information in a centralized cloud database, including:
+
+* Users
+* Roles
+* Permissions
+* Companies
+* Customers
+* Suppliers
+* Inventory
+* Raw Materials
+* Processed Materials
+* Finished Products
+* Sales
+* Purchases
+* Production
+* Accounting
+* Payroll
+* Expenses
+* Reports
+* Settings
+* Audit Logs
+* Notifications
+* Attachments
+* System Configuration
+
+No business records should be permanently stored only on a single computer.
+
+## Real-Time Synchronization
+
+All changes must synchronize automatically.
+
+Examples:
+
+* New user created.
+* Inventory updated.
+* Invoice generated.
+* Payment received.
+* Stock adjusted.
+* Production completed.
+* Customer added.
+* Supplier modified.
+
+Changes should become visible to authorized users on all devices with minimal delay.
+
+## Offline Mode
+
+Support offline operation when internet is unavailable.
+
+Requirements:
+
+* Store temporary changes locally.
+* Queue offline transactions.
+* Synchronize automatically once connectivity returns.
+* Detect synchronization conflicts.
+* Resolve conflicts safely using timestamps or administrator-defined rules.
+* Never overwrite newer cloud data with older offline data without conflict handling.
+
+## Device Independence
+
+A user should be able to:
+
+* Log in on Computer A.
+* Log out.
+* Log in on Computer B.
+* Log in on Computer C.
+* Log in using an Android device.
+
+The user must access the same account, permissions, and synchronized business data on every device.
+
+## Multi-User Environment
+
+Support concurrent access by many users.
+
+Requirements:
+
+* Role-Based Access Control (RBAC)
+* Department permissions
+* Branch permissions
+* Company permissions (if multi-company)
+* Session management
+* Device tracking
+* Login history
+* Active session management
+* Force logout by administrators
+
+## Security
+
+Implement enterprise-grade security:
+
+* HTTPS/TLS encryption
+* JWT Authentication
+* Refresh Tokens
+* Secure password hashing (Argon2 or bcrypt)
+* Token expiration
+* Account lockout after repeated failed attempts
+* Login rate limiting
+* CSRF protection where applicable
+* XSS protection
+* SQL Injection prevention
+* Audit logs for all critical actions
+
+## Cloud Architecture
+
+Design the application using a centralized API architecture:
+
+Client Applications
+
+* Windows Desktop
+* Android
+* Web Browser
+
+↓
+
+Secure REST API and/or GraphQL API
+
+↓
+
+Central Authentication Service
+
+↓
+
+Central Database
+
+All clients must use the same backend so data remains consistent across every device.
+
+## Data Consistency
+
+The system must ensure:
+
+* No duplicate records caused by synchronization.
+* Transactions remain consistent.
+* Atomic database operations.
+* Automatic retry for failed synchronization.
+* Backup and recovery support.
+* Audit trails for all changes.
+
+## Permissions
+
+Permissions must be enforced by the server, not only the client.
+
+Users must only access data they are authorized to view or modify.
+
+## Scalability
+
+Design the architecture to support:
+
+* Multiple companies
+* Multiple branches
+* Hundreds of concurrent users
+* Thousands of customers
+* Large inventory datasets
+* Future mobile and desktop applications using the same backend
+
+## Final Requirement
+
+The application must no longer rely on a single computer for user accounts or business data.
+
+Users, authentication, permissions, and business information must be centrally managed and securely synchronized so any authorized user can sign in from any supported device and immediately access the same account and up-to-date data, while retaining offline capability with automatic synchronization when connectivity is restored.

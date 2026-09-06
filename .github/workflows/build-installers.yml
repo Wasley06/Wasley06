@@ -1,0 +1,132 @@
+name: Build Installers
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  # Delete old pre-releases to free artifact/release storage before building
+  cleanup:
+    name: Cleanup Old Releases
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old pre-releases (keep latest 3)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # List pre-releases sorted by date, skip the 3 newest, delete the rest
+          gh release list --repo ${{ github.repository }} --limit 50 --json tagName,isPrerelease \
+            | jq -r '.[] | select(.isPrerelease) | .tagName' \
+            | tail -n +4 \
+            | xargs -I{} gh release delete {} --repo ${{ github.repository }} --yes --cleanup-tag || true
+
+  validate:
+    name: Validate & Create Release
+    needs: cleanup
+    runs-on: ubuntu-latest
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Type check
+        run: npx tsc --noEmit
+      - name: Build web
+        run: pnpm build:web
+      - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: installers-${{ github.run_number }}-${{ github.run_attempt }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+            --target "${{ github.sha }}" \
+            --title "Fabegon ERP ${{ github.run_number }}.${{ github.run_attempt }}" \
+            --notes "Windows installer + Android APK for commit ${{ github.sha }}." \
+            --prerelease
+
+  windows:
+    name: Windows Installer
+    needs: validate
+    runs-on: windows-latest
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      GH_TOKEN: ${{ github.token }}
+      ELECTRON: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install dependencies
+        run: npm install
+      - name: Build web assets (relative base for Electron app:// protocol)
+        run: npm run build:web
+        env:
+          ELECTRON: true
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      - name: Compile Electron main process
+        run: npm run build:electron
+      - name: Build Windows installer
+        run: npx electron-builder --win --config electron-builder.yml --publish never
+      - name: Upload Windows installers to release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: installers-${{ github.run_number }}-${{ github.run_attempt }}
+        run: |
+          $files = Get-ChildItem release -Include *.exe,*.blockmap,latest*.yml -Recurse | Select-Object -ExpandProperty FullName
+          if ($files) { gh release upload $env:RELEASE_TAG $files --clobber }
+
+  android:
+    name: Android APK
+    needs: validate
+    runs-on: ubuntu-latest
+    env:
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Install dependencies
+        run: pnpm install --no-frozen-lockfile
+      - name: Build web dist for Android
+        run: pnpm build:web
+      - name: Add Android platform
+        run: npx cap add android || true
+      - name: Sync Android assets
+        run: npx cap sync android
+      - name: Generate Fabegon app icon
+        run: npx @capacitor/assets generate --android --assetPath assets --androidProject android
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug --no-daemon
+      - name: Upload APK to release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: installers-${{ github.run_number }}-${{ github.run_attempt }}
+        run: gh release upload "$RELEASE_TAG" android/app/build/outputs/apk/debug/app-debug.apk --clobber

@@ -1,0 +1,6 @@
+{
+  "name": "Fabegon ERP",
+  "description": "A cloud-first Enterprise Resource Planning (ERP) platform built specifically for grain processing, milling, manufacturing, warehousing, procurement, finance, sales, logistics, and business management.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

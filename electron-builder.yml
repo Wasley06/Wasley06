@@ -1,0 +1,31 @@
+appId: com.wasley.fabegon.erp
+productName: Fabegon ERP
+copyright: Copyright © 2026 Wasley Inc.
+
+icon: build/icon.png
+
+directories:
+  output: release
+
+files:
+  - dist/**/*
+  - electron-dist/**/*.js
+  - package.json
+
+win:
+  target:
+    - nsis
+    - portable
+
+nsis:
+  oneClick: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Fabegon ERP
+
+publish:
+  provider: github
+  owner: Wasley06
+  repo: ERP-FABEGON
