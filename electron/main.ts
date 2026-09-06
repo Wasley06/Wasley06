@@ -5,8 +5,8 @@ import fs from 'node:fs'
 import { pathToFileURL } from 'node:url'
 
 // Register the custom `app://` scheme BEFORE app is ready.
-// This lets the renderer load assets without CORS/file:// origin restrictions
-// that block ES-module `crossorigin` scripts in packaged Electron apps.
+// Gives the renderer a real origin so crossorigin ES-module scripts load correctly.
+// Must happen before app.whenReady() — this call is synchronous.
 protocol.registerSchemesAsPrivileged([
   {
     scheme: 'app',
@@ -21,6 +21,58 @@ protocol.registerSchemesAsPrivileged([
 ])
 
 let mainWindow: BrowserWindow | null = null
+
+const MIME: Record<string, string> = {
+  '.html': 'text/html',
+  '.js':   'application/javascript',
+  '.mjs':  'application/javascript',
+  '.css':  'text/css',
+  '.png':  'image/png',
+  '.jpg':  'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.svg':  'image/svg+xml',
+  '.ico':  'image/x-icon',
+  '.woff': 'font/woff',
+  '.woff2':'font/woff2',
+  '.ttf':  'font/ttf',
+  '.json': 'application/json',
+  '.webp': 'image/webp',
+}
+
+function getMime(filePath: string): string {
+  const ext = path.extname(filePath).toLowerCase()
+  return MIME[ext] ?? 'application/octet-stream'
+}
+
+function registerAppProtocol(distPath: string) {
+  protocol.handle('app', (request) => {
+    try {
+      const url = new URL(request.url)
+      const relPath = url.pathname.replace(/^\/+/, '') || 'index.html'
+      const candidate = path.join(distPath, relPath)
+
+      // SPA fallback: serve index.html for any path that doesn't exist as a file
+      const target = fs.existsSync(candidate) ? candidate : path.join(distPath, 'index.html')
+
+      // Try net.fetch first (works when files are unpacked / asar:false)
+      return net.fetch(pathToFileURL(target).toString())
+    } catch (_) {
+      // Fallback: read with fs (asar-aware in Electron) and return a Response
+      try {
+        const url = new URL(request.url)
+        const relPath = url.pathname.replace(/^\/+/, '') || 'index.html'
+        const candidate = path.join(distPath, relPath)
+        const target = fs.existsSync(candidate) ? candidate : path.join(distPath, 'index.html')
+        const data = fs.readFileSync(target)
+        return new Response(data, {
+          headers: { 'Content-Type': getMime(target) },
+        })
+      } catch (err) {
+        return new Response('Not found', { status: 404 })
+      }
+    }
+  })
+}
 
 function createWindow() {
   Menu.setApplicationMenu(null)
@@ -38,7 +90,7 @@ function createWindow() {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: false, // must be false to allow preload script when using custom protocol
+      sandbox: false,
     },
     backgroundColor: '#0f172a',
     show: false,
@@ -49,7 +101,6 @@ function createWindow() {
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173')
   } else {
-    // Use our custom protocol — avoids all file:// CORS issues with ES module crossorigin tags
     mainWindow.loadURL('app:///index.html')
   }
 
@@ -58,19 +109,26 @@ function createWindow() {
     if (!isDev) checkForUpdates()
   })
 
+  // Force-show after 8 seconds in case ready-to-show never fires
+  setTimeout(() => {
+    if (mainWindow && !mainWindow.isDestroyed() && !mainWindow.isVisible()) {
+      mainWindow.show()
+    }
+  }, 8000)
+
   mainWindow.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
-    // If the app:// protocol fails for any reason, fall back to direct file loading
     if (!isDev && mainWindow && !mainWindow.isDestroyed()) {
+      // Hard fallback: loadFile bypasses the protocol but at least shows something
       const fallback = path.join(__dirname, '..', 'dist', 'index.html')
       if (fs.existsSync(fallback)) {
         mainWindow.loadFile(fallback)
       } else {
         mainWindow.loadURL(
-          `data:text/html,<body style="background:#0f172a;color:#ef4444;font-family:sans-serif;padding:40px">
-            <h2>Fabegon ERP failed to load</h2>
-            <p>Error ${errorCode}: ${errorDescription}</p>
-            <p>Please reinstall the application.</p>
-          </body>`
+          `data:text/html,<body style="background:%230f172a;color:%23ef4444;font-family:sans-serif;padding:40px">` +
+          `<h2>Fabegon ERP failed to load</h2>` +
+          `<p>Error ${errorCode}: ${errorDescription}</p>` +
+          `<p>Please reinstall the application.</p>` +
+          `</body>`
         )
         mainWindow.show()
       }
@@ -83,21 +141,6 @@ function createWindow() {
   })
 
   mainWindow.on('closed', () => { mainWindow = null })
-}
-
-function registerAppProtocol() {
-  const distPath = path.join(__dirname, '..', 'dist')
-
-  protocol.handle('app', (request) => {
-    const url = new URL(request.url)
-    // Strip leading slash; default to index.html for SPA routing
-    let relPath = url.pathname.replace(/^\/+/, '') || 'index.html'
-    const filePath = path.join(distPath, relPath)
-
-    // For SPA: serve index.html for any path that doesn't map to a real file
-    const target = fs.existsSync(filePath) ? filePath : path.join(distPath, 'index.html')
-    return net.fetch(pathToFileURL(target).toString())
-  })
 }
 
 function checkForUpdates() {
@@ -113,13 +156,14 @@ function checkForUpdates() {
         if (result.response === 0) autoUpdater.quitAndInstall()
       })
     })
-  } catch (_) {
-    // Auto-updater failures are non-critical
-  }
+  } catch (_) {}
 }
 
 app.whenReady().then(() => {
-  registerAppProtocol()
+  // distPath: in packaged app, __dirname = <install>/resources/app/electron-dist
+  // (asar:false means files sit unpacked in resources/app/)
+  const distPath = path.join(__dirname, '..', 'dist')
+  registerAppProtocol(distPath)
   createWindow()
 })
 

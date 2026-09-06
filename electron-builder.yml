@@ -4,6 +4,10 @@ copyright: Copyright © 2026 Wasley Inc.
 
 icon: build/icon.png
 
+# Disable asar packing so the app:// protocol handler can read dist files
+# via net.fetch(file://). asar archives are not readable by file:// URLs.
+asar: false
+
 directories:
   output: release
 
@@ -28,4 +32,4 @@ nsis:
 publish:
   provider: github
   owner: Wasley06
-  repo: ERP-FABEGON
+  repo: Wasley06
