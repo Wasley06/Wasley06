@@ -1,12 +1,18 @@
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 
-/**
- * Production build config — used by GitHub Actions and Electron builder.
- * Does not include Figma Make dev-only plugins.
- */
+// Strips crossorigin="anonymous" / crossorigin from every <script> and <link>
+// in the built HTML. Without this, Electron's Chromium enforces CORS on
+// ES-module scripts loaded via file://, blocking the app from mounting.
+const stripCrossOrigin = (): Plugin => ({
+  name: 'strip-crossorigin',
+  transformIndexHtml(html: string) {
+    return html.replace(/\s+crossorigin(?:="[^"]*")?/gi, '')
+  },
+})
+
 export default defineConfig({
   base: process.env.ELECTRON ? './' : '/',
   /* ── Build metadata — same values available in Figma Make dev mode ── */
@@ -29,7 +35,7 @@ export default defineConfig({
       },
     },
   },
-  plugins: [react(), tailwindcss()],
+  plugins: [react(), tailwindcss(), ...(process.env.ELECTRON ? [stripCrossOrigin()] : [])],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
