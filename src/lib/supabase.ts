@@ -5,12 +5,14 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js'
 export const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL  || 'https://tzvlavmaaummnufibgkt.supabase.co'
 export const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6dmxhdm1hYXVtbW51ZmliZ2t0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5MDU1MjUsImV4cCI6MjEwMDQ4MTUyNX0.6YyJbc9FTBiCaIhbFwJB49XZi4peXq29Ek8pXnyVMvY'
 
-// Singleton stored on globalThis so the IIFE bundle never creates a second
-// GoTrueClient even if this module scope executes more than once.
-declare global { interface Window { __fabegon_supabase__?: SupabaseClient } }
+// Singleton on globalThis so the IIFE bundle never creates a second GoTrueClient
+// even if this module scope executes more than once. Using globalThis directly
+// (not globalThis.window) so it works in every JS context (renderer, worker, etc.).
+const SINGLETON_KEY = '__fabegon_supabase__'
+declare global { var __fabegon_supabase__: SupabaseClient | undefined }
 
-if (!globalThis.window.__fabegon_supabase__) {
-  globalThis.window.__fabegon_supabase__ = createClient(SUPABASE_URL, SUPABASE_ANON, {
+if (!globalThis[SINGLETON_KEY]) {
+  globalThis[SINGLETON_KEY] = createClient(SUPABASE_URL, SUPABASE_ANON, {
     auth: {
       persistSession: true,
       autoRefreshToken: true,
@@ -20,7 +22,7 @@ if (!globalThis.window.__fabegon_supabase__) {
   })
 }
 
-export const supabase = globalThis.window.__fabegon_supabase__!
+export const supabase = globalThis[SINGLETON_KEY]!
 
 /* Usernames are stored as email = username@fabegon.internal in Supabase Auth */
 export const toAuthEmail = (username: string) =>

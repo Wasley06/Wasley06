@@ -7,7 +7,12 @@ import { AppErrorBoundary } from './components/StartupError'
 function mount() {
   const rootEl = document.getElementById('root')
   if (!rootEl) {
-    document.body.innerHTML = '<div style="color:red;padding:20px">Fatal: #root element not found</div>'
+    // document.body may also be null if this somehow runs before DOM is ready —
+    // guard both to avoid a secondary "Cannot set properties of null" error.
+    const target = document.body ?? document.documentElement
+    if (target) {
+      target.innerHTML = '<div style="color:red;padding:20px;font-family:system-ui">Fatal: #root element not found. Please reinstall the application.</div>'
+    }
     return
   }
 
@@ -23,10 +28,13 @@ function mount() {
     const message = err instanceof Error ? err.message : String(err)
     console.error('[Fabegon] Fatal startup error:', err)
 
-    // Inject plain HTML recovery UI — avoids calling createRoot twice on same element
+    // Use direct DOM injection — avoids calling createRoot twice on the same element.
     rootEl.innerHTML = ''
-    rootEl.style.cssText = 'position:fixed;inset:0;display:flex;align-items:center;justify-content:center;' +
-      'background:linear-gradient(135deg,#050C06,#0A1A0C);font-family:system-ui,sans-serif;color:#fff;padding:32px;box-sizing:border-box'
+    rootEl.style.cssText = [
+      'position:fixed', 'inset:0', 'display:flex', 'align-items:center',
+      'justify-content:center', 'background:linear-gradient(135deg,#050C06,#0A1A0C)',
+      'font-family:system-ui,sans-serif', 'color:#fff', 'padding:32px', 'box-sizing:border-box',
+    ].join(';')
     rootEl.innerHTML = `
       <div style="max-width:480px;width:100%;text-align:center">
         <div style="font-size:36px;margin-bottom:12px">⚠</div>
@@ -42,4 +50,10 @@ function mount() {
   }
 }
 
-mount()
+// Run after DOM is fully parsed. In the IIFE Electron build the <script> tag
+// is in <head>; even with defer it's safest to also listen for DOMContentLoaded.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', mount)
+} else {
+  mount()
+}

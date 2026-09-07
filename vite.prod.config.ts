@@ -12,8 +12,12 @@ const electronHtmlPlugin = (): Plugin => ({
     return html
       // Remove module preloads — not needed for IIFE
       .replace(/<link rel="modulepreload"[^>]*>\s*/gi, '')
-      // Change <script type="module" to plain <script
-      .replace(/<script type="module"/gi, '<script')
+      // Change <script type="module" to plain <script defer.
+      // type="module" is implicitly deferred (waits for DOM); removing it without
+      // adding defer makes the script synchronous, so it runs before <body> is
+      // parsed — getElementById('root') and document.body are both null at that
+      // point. The defer attribute restores the original deferred execution.
+      .replace(/<script type="module"/gi, '<script defer')
       // Strip any crossorigin attributes
       .replace(/\s+crossorigin(?:="[^"]*")?/gi, '')
   },
