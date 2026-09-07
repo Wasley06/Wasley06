@@ -1,8 +1,9 @@
 import { createClient } from '@supabase/supabase-js'
 
-/* Falls back to hardcoded values when env vars are not set (Figma Make / local dev) */
-export const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL  ?? 'https://tzvlavmaaummnufibgkt.supabase.co'
-export const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6dmxhdm1hYXVtbW51ZmliZ2t0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5MDU1MjUsImV4cCI6MjEwMDQ4MTUyNX0.6YyJbc9FTBiCaIhbFwJB49XZi4peXq29Ek8pXnyVMvY'
+// Use || not ?? — env vars may be empty string "" in Electron IIFE builds,
+// and ?? only falls back on null/undefined, not on "".
+export const SUPABASE_URL  = import.meta.env.VITE_SUPABASE_URL  || 'https://tzvlavmaaummnufibgkt.supabase.co'
+export const SUPABASE_ANON = import.meta.env.VITE_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6dmxhdm1hYXVtbW51ZmliZ2t0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5MDU1MjUsImV4cCI6MjEwMDQ4MTUyNX0.6YyJbc9FTBiCaIhbFwJB49XZi4peXq29Ek8pXnyVMvY'
 
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON, {
   auth: {

@@ -27,6 +27,15 @@ export default defineConfig({
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version ?? '1.0.39'),
     __GIT_COMMIT__:  JSON.stringify(process.env.VITE_GIT_COMMIT ?? 'local'),
     __BUILD_DATE__:  JSON.stringify(new Date().toISOString().slice(0, 10)),
+    // Bake Supabase creds into the bundle so they are always present even when
+    // CI secrets are not configured. The fallback strings match src/lib/supabase.ts.
+    'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(
+      process.env.VITE_SUPABASE_URL || 'https://tzvlavmaaummnufibgkt.supabase.co'
+    ),
+    'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(
+      process.env.VITE_SUPABASE_ANON_KEY ||
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR6dmxhdm1hYXVtbW51ZmliZ2t0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODQ5MDU1MjUsImV4cCI6MjEwMDQ4MTUyNX0.6YyJbc9FTBiCaIhbFwJB49XZi4peXq29Ek8pXnyVMvY'
+    ),
   },
   build: {
     outDir: 'dist',
