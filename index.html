@@ -6,6 +6,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Fabegon ERP</title>
     <!-- figma:head-end -->
+    <!-- Global error catcher — runs before any JS bundle loads.
+         If the bundle fails to execute, this catches the error and shows
+         a visible recovery screen instead of a blank/dark page. -->
+    <script>
+      window.__fabegon_error = null;
+
+      window.onerror = function(msg, src, line, col, err) {
+        window.__fabegon_error = { msg: String(msg), stack: err ? String(err.stack) : '' };
+        // After 2s, if React still hasn't mounted anything, show the error UI
+        setTimeout(function() {
+          var root = document.getElementById('root');
+          if (root && root.children.length === 0) {
+            root.style.cssText = [
+              'position:fixed','inset:0','display:flex','align-items:center',
+              'justify-content:center','flex-direction:column','gap:16px',
+              'background:#060D08','font-family:system-ui,sans-serif',
+              'color:#fff','padding:32px','box-sizing:border-box','z-index:9999'
+            ].join(';');
+            root.innerHTML =
+              '<div style="max-width:480px;width:100%;text-align:center">' +
+                '<div style="font-size:40px;margin-bottom:8px">⚠️</div>' +
+                '<h2 style="margin:0 0 8px;font-size:22px;font-weight:700;color:#4CAF50">Fabegon ERP</h2>' +
+                '<p style="margin:0 0 24px;font-size:17px;color:#ef5350;font-weight:600">Unable to start the application</p>' +
+                '<p style="margin:0 0 32px;font-size:13px;color:rgba(255,255,255,0.5);word-break:break-word">' + String(msg) + '</p>' +
+                '<div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">' +
+                  '<button onclick="location.reload()" style="background:#2E7D32;color:#fff;border:none;padding:11px 28px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600">↻ Reload</button>' +
+                  '<button onclick="localStorage.clear();sessionStorage.clear();location.reload()" style="background:#1565C0;color:#fff;border:none;padding:11px 28px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600">Clear Session & Reload</button>' +
+                '</div>' +
+              '</div>';
+          }
+        }, 2000);
+      };
+
+      window.addEventListener('unhandledrejection', function(e) {
+        if (!window.__fabegon_error) {
+          window.__fabegon_error = { msg: String(e.reason), stack: '' };
+        }
+      });
+    </script>
   </head>
   <body>
     <!-- figma:body-start -->
