@@ -226,23 +226,31 @@ function AppShell() {
     /* Clear legacy keys that are no longer used */
     const legacyKeys = ['fabegon:system-users', 'fabegon:perms', 'fabegon:seed-v1']
     legacyKeys.forEach(k => localStorage.removeItem(k))
-    /* Check for a persisted session (persistSession: true) — auto-restore user */
-    const { data } = await supabase.auth.getSession()
-    if (data.session?.user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role, status, username, deleted_at')
-        .eq('id', data.session.user.id)
-        .single()
-      if (!profile?.deleted_at && profile?.status !== 'Suspended') {
-        const displayName = profile?.username ?? data.session.user.email?.split('@')[0] ?? 'User'
-        const role = profile?.role ?? (data.session.user.user_metadata?.role as string) ?? 'Cashier'
-        setUser({ name: displayName, role, email: data.session.user.email ?? '' })
-        setAppState('app')
-        return
+    try {
+      /* 6-second timeout: if Supabase is unreachable (offline install, firewall,
+         paused project), we must NOT hang here — always reach the login page. */
+      const timeout = new Promise<{ data: { session: null } }>(r =>
+        setTimeout(() => r({ data: { session: null } }), 6000)
+      )
+      const { data } = await Promise.race([supabase.auth.getSession(), timeout])
+      if (data.session?.user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role, status, username, deleted_at')
+          .eq('id', data.session.user.id)
+          .single()
+        if (!profile?.deleted_at && profile?.status !== 'Suspended') {
+          const displayName = profile?.username ?? data.session.user.email?.split('@')[0] ?? 'User'
+          const role = profile?.role ?? (data.session.user.user_metadata?.role as string) ?? 'Cashier'
+          setUser({ name: displayName, role, email: data.session.user.email ?? '' })
+          setAppState('app')
+          return
+        }
+        /* Disabled/suspended account — sign out and go to login */
+        await supabase.auth.signOut().catch(() => {})
       }
-      /* Disabled/suspended account — sign out and go to login */
-      await supabase.auth.signOut()
+    } catch {
+      /* Any error (network, Supabase down, etc.) → fall through to login */
     }
     setAppState('login')
   }} />
