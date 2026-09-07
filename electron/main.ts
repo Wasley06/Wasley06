@@ -1,7 +1,11 @@
-import { app, BrowserWindow, shell, ipcMain, dialog, Menu } from 'electron'
-import { autoUpdater } from 'electron-updater'
+import { app, BrowserWindow, shell, ipcMain, Menu } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
+
+// Disable CORS enforcement for file:// origins at the Chromium level.
+// This is the belt-and-suspenders fix alongside stripping crossorigin from HTML.
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors')
+app.commandLine.appendSwitch('disable-web-security')
 
 let mainWindow: BrowserWindow | null = null
 
@@ -17,53 +21,33 @@ function createWindow() {
     frame: false,
     titleBarStyle: 'hidden',
     trafficLightPosition: { x: 16, y: 16 },
+    show: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       nodeIntegration: false,
       contextIsolation: true,
-      sandbox: true,
-      webSecurity: false, // allow file:// assets to load without origin restriction
+      sandbox: false,
+      webSecurity: false,
     },
-    backgroundColor: '#0f172a',
-    show: false,
   })
 
-  const isDev = !app.isPackaged
-
-  if (isDev) {
+  if (!app.isPackaged) {
     mainWindow.loadURL('http://localhost:5173')
   } else {
-    // The build step (ELECTRON=true) strips crossorigin from index.html so
-    // file:// loading works without CORS errors. webSecurity:false is the
-    // belt-and-suspenders fallback for any remaining origin checks.
     const indexPath = path.join(__dirname, '..', 'dist', 'index.html')
-    mainWindow.loadFile(indexPath)
-  }
-
-  mainWindow.once('ready-to-show', () => {
-    mainWindow?.show()
-    if (!isDev) checkForUpdates()
-  })
-
-  // Force-show after 10s in case ready-to-show never fires
-  setTimeout(() => {
-    if (mainWindow && !mainWindow.isDestroyed() && !mainWindow.isVisible()) {
-      mainWindow.show()
-    }
-  }, 10000)
-
-  mainWindow.webContents.on('did-fail-load', (_event, errorCode, errorDescription) => {
-    if (!isDev && mainWindow && !mainWindow.isDestroyed()) {
+    if (fs.existsSync(indexPath)) {
+      mainWindow.loadFile(indexPath)
+    } else {
+      // Fallback: show error so the user knows what happened
       mainWindow.loadURL(
-        `data:text/html,<body style="background:%230f172a;color:%23ef4444;font-family:sans-serif;padding:40px">` +
-        `<h2>Fabegon ERP could not load</h2>` +
-        `<p>Error ${errorCode}: ${errorDescription}</p>` +
+        `data:text/html,<body style="font-family:sans-serif;padding:40px;color:#333">` +
+        `<h2>Fabegon ERP - Load Error</h2>` +
+        `<p>Could not find: ${indexPath}</p>` +
         `<p>Please reinstall the application.</p>` +
         `</body>`
       )
-      mainWindow.show()
     }
-  })
+  }
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('https://')) shell.openExternal(url)
@@ -71,22 +55,6 @@ function createWindow() {
   })
 
   mainWindow.on('closed', () => { mainWindow = null })
-}
-
-function checkForUpdates() {
-  try {
-    autoUpdater.checkForUpdatesAndNotify()
-    autoUpdater.on('update-downloaded', () => {
-      dialog.showMessageBox(mainWindow!, {
-        type: 'info',
-        title: 'Update Ready',
-        message: 'A new version is ready. Restart Fabegon ERP to apply it.',
-        buttons: ['Restart Now', 'Later'],
-      }).then(result => {
-        if (result.response === 0) autoUpdater.quitAndInstall()
-      })
-    })
-  } catch (_) {}
 }
 
 app.whenReady().then(createWindow)

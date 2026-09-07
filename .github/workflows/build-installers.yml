@@ -73,12 +73,18 @@ jobs:
           node-version: 22
       - name: Install dependencies
         run: npm install
-      - name: Build web assets (relative base for Electron app:// protocol)
+      - name: Build web assets (ELECTRON=true strips crossorigin from HTML)
         run: npm run build:web
         env:
           ELECTRON: true
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      - name: Verify crossorigin stripped from index.html
+        shell: pwsh
+        run: |
+          $html = Get-Content dist/index.html -Raw
+          if ($html -match 'crossorigin') { Write-Error "crossorigin still present in dist/index.html!"; exit 1 }
+          Write-Host "OK: no crossorigin in dist/index.html"
       - name: Compile Electron main process
         run: npm run build:electron
       - name: Build Windows installer
