@@ -4,6 +4,11 @@ copyright: Copyright © 2026 Wasley Inc.
 
 icon: build/icon.png
 
+# MUST be false: asar:true packs files into app.asar and Chromium's renderer
+# cannot load ES-module chunks via file:// from inside the asar archive.
+# CSS loads fine (no CORS restrictions) but JS modules fail silently → blank screen.
+asar: false
+
 directories:
   output: release
 

@@ -2,11 +2,6 @@ import { app, BrowserWindow, shell, ipcMain, Menu } from 'electron'
 import path from 'node:path'
 import fs from 'node:fs'
 
-// Disable CORS enforcement for file:// origins at the Chromium level.
-// This is the belt-and-suspenders fix alongside stripping crossorigin from HTML.
-app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors')
-app.commandLine.appendSwitch('disable-web-security')
-
 let mainWindow: BrowserWindow | null = null
 
 function createWindow() {
@@ -34,17 +29,17 @@ function createWindow() {
   if (!app.isPackaged) {
     mainWindow.loadURL('http://localhost:5173')
   } else {
-    const indexPath = path.join(__dirname, '..', 'dist', 'index.html')
+    // app.getAppPath() returns the unpacked app root (resources/app/ with asar:false).
+    // This is more reliable than __dirname in packaged builds on Windows.
+    const indexPath = path.join(app.getAppPath(), 'dist', 'index.html')
     if (fs.existsSync(indexPath)) {
       mainWindow.loadFile(indexPath)
     } else {
-      // Fallback: show error so the user knows what happened
       mainWindow.loadURL(
-        `data:text/html,<body style="font-family:sans-serif;padding:40px;color:#333">` +
-        `<h2>Fabegon ERP - Load Error</h2>` +
-        `<p>Could not find: ${indexPath}</p>` +
-        `<p>Please reinstall the application.</p>` +
-        `</body>`
+        `data:text/html,<body style="font-family:sans-serif;padding:40px;color:#c00">` +
+        `<h2>Fabegon ERP — Load Error</h2>` +
+        `<p>dist/index.html not found at: ${indexPath}</p>` +
+        `<p>Please reinstall the application.</p></body>`
       )
     }
   }
