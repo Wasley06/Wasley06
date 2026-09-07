@@ -285,19 +285,17 @@ export default function Production() {
           }
         >
           <FormRow>
-            {/* Finished Product — combobox: type or select */}
             <div>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '6px', color: 'var(--secondary-foreground)' }}>Finished Product *</label>
-              <input
+              <select
                 className="input-base"
-                list="prod-product-list"
-                placeholder="Type or select product…"
                 value={fProduct}
                 onChange={e => setFProduct(e.target.value)}
-              />
-              <datalist id="prod-product-list">
-                {productOptions.map(p => <option key={p} value={p} />)}
-              </datalist>
+                style={{ cursor: 'pointer' }}
+              >
+                <option value="">— Select product —</option>
+                {productOptions.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '12px', fontWeight: 500, marginBottom: '6px', color: 'var(--secondary-foreground)' }}>Production Line</label>

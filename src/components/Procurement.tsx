@@ -688,7 +688,7 @@ export default function Procurement({ logoUrl }: { logoUrl?: string }) {
         return (
           <div style={{ position: 'fixed', inset: 0, zIndex: 500, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(4px)', overflowY: 'auto', paddingTop: '24px', paddingBottom: '24px' }}
             onClick={() => { setViewPO(null); setViewPOTab('details');  }}>
-            <div onClick={e => e.stopPropagation()} style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '16px', width: '580px', maxWidth: '95vw', maxHeight: 'calc(100vh - 80px)', height: 'fit-content', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow)', margin: '0 auto' }}>
+            <div onClick={e => e.stopPropagation()} style={{ background: 'var(--card)', border: '1px solid var(--border)', borderRadius: '16px', width: '580px', maxWidth: '95vw', maxHeight: 'calc(100vh - 80px)', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow)', margin: '0 auto' }}>
               {/* Header */}
               <div style={{ padding: '20px 24px 0', flexShrink: 0 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
@@ -745,7 +745,7 @@ export default function Procurement({ logoUrl }: { logoUrl?: string }) {
               </div>
 
               {/* Tab content */}
-              <div style={{ flex: 1, overflowY: 'auto', padding: '16px 24px' }}>
+              <div style={{ flex: '1 1 0', minHeight: 0, overflowY: 'auto', padding: '16px 24px' }}>
                 {viewPOTab === 'details' && (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {[
