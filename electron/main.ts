@@ -1,33 +1,19 @@
-import { app, BrowserWindow, shell, ipcMain, Menu, protocol, net } from 'electron'
+import { app, BrowserWindow, shell, ipcMain, Menu } from 'electron'
+import http from 'node:http'
 import path from 'node:path'
 import fs from 'node:fs'
-import { pathToFileURL } from 'node:url'
 
-// ─── Register app:// scheme BEFORE app is ready ───────────────────────────────
-// Serving via a privileged custom scheme gives the renderer a real HTTP-like
-// origin, which means ES-module chunks load without ANY file:// restrictions.
-// This is the standard pattern used by electron-vite and all production
-// Electron+Vite apps. It works because:
-//   1. asar:false → files are real files on disk
-//   2. net.fetch(file://...) reads real files and returns a proper Response
-//   3. Chromium treats app:// as a secure standard origin → no CORS blocks
-protocol.registerSchemesAsPrivileged([{
-  scheme: 'app',
-  privileges: {
-    secure: true,
-    standard: true,
-    supportFetchAPI: true,
-    corsEnabled: false,
-    stream: true,
-  },
-}])
+// ─── Local HTTP server ────────────────────────────────────────────────────────
+// Serve the Vite-built dist/ over a random localhost port.
+// This is identical to how Figma preview works and bypasses every
+// file:// / CORS / ES-module restriction in every Chromium version.
+let staticServer: http.Server | null = null
 
-// MIME types for assets Vite emits
 const MIME: Record<string, string> = {
   '.html': 'text/html; charset=utf-8',
-  '.js':   'application/javascript',
-  '.mjs':  'application/javascript',
-  '.css':  'text/css',
+  '.js':   'application/javascript; charset=utf-8',
+  '.mjs':  'application/javascript; charset=utf-8',
+  '.css':  'text/css; charset=utf-8',
   '.png':  'image/png',
   '.jpg':  'image/jpeg',
   '.jpeg': 'image/jpeg',
@@ -41,13 +27,44 @@ const MIME: Record<string, string> = {
   '.gif':  'image/gif',
 }
 
-function getMime(p: string): string {
-  return MIME[path.extname(p).toLowerCase()] ?? 'application/octet-stream'
+function startServer(distPath: string): Promise<number> {
+  return new Promise((resolve, reject) => {
+    staticServer = http.createServer((req, res) => {
+      // Strip query string, decode URI, default to index.html
+      const rawPath = (req.url ?? '/').split('?')[0]
+      let urlPath: string
+      try { urlPath = decodeURIComponent(rawPath) } catch { urlPath = rawPath }
+
+      const candidate = path.join(distPath, urlPath === '/' ? 'index.html' : urlPath)
+
+      // SPA fallback: any unknown path → index.html
+      const filePath = fs.existsSync(candidate) && fs.statSync(candidate).isFile()
+        ? candidate
+        : path.join(distPath, 'index.html')
+
+      const ext = path.extname(filePath).toLowerCase()
+      res.setHeader('Content-Type', MIME[ext] ?? 'application/octet-stream')
+      res.setHeader('Cache-Control', 'no-cache')
+
+      const stream = fs.createReadStream(filePath)
+      stream.on('error', () => { res.writeHead(404); res.end('Not found') })
+      stream.pipe(res)
+    })
+
+    // Port 0 → OS picks a free port
+    staticServer.listen(0, '127.0.0.1', () => {
+      const addr = staticServer!.address() as { port: number }
+      resolve(addr.port)
+    })
+
+    staticServer.on('error', reject)
+  })
 }
 
+// ─── Window ───────────────────────────────────────────────────────────────────
 let mainWindow: BrowserWindow | null = null
 
-function createWindow() {
+function createWindow(port: number) {
   Menu.setApplicationMenu(null)
 
   mainWindow = new BrowserWindow({
@@ -65,25 +82,18 @@ function createWindow() {
       nodeIntegration: false,
       contextIsolation: true,
       sandbox: false,
-      webSecurity: false,
     },
   })
 
-  if (!app.isPackaged) {
-    // Dev: use Vite's dev server
-    mainWindow.loadURL('http://localhost:5173')
-  } else {
-    // Production: serve via app:// — gives renderer a proper origin
-    mainWindow.loadURL('app://dist/index.html')
-  }
+  mainWindow.loadURL(`http://127.0.0.1:${port}`)
 
-  mainWindow.webContents.on('did-fail-load', (_e, code, desc, url) => {
-    if (!app.isPackaged) return
-    // Show a visible error instead of blank screen so we can diagnose
+  mainWindow.webContents.on('did-fail-load', (_e, code, desc) => {
+    // Show diagnostic error instead of blank screen
     mainWindow?.loadURL(
       `data:text/html,<body style="font-family:monospace;padding:32px;color:#c00;background:#fff">` +
-      `<h2>Fabegon ERP — failed to load</h2>` +
-      `<p>URL: ${url}</p><p>Code: ${code} — ${desc}</p>` +
+      `<h2>Fabegon ERP — load failed</h2>` +
+      `<p>HTTP server port: ${port}</p>` +
+      `<p>Error ${code}: ${desc}</p>` +
       `<p>App path: ${app.getAppPath()}</p></body>`
     )
   })
@@ -96,38 +106,51 @@ function createWindow() {
   mainWindow.on('closed', () => { mainWindow = null })
 }
 
-app.whenReady().then(() => {
-  // ─── Register protocol handler ────────────────────────────────────────────
-  // app.getAppPath() is the unpacked app root (resources/app/ with asar:false).
-  // Map every app://dist/... request to the real file on disk.
-  const appRoot = app.getAppPath()
+// ─── App lifecycle ────────────────────────────────────────────────────────────
+app.whenReady().then(async () => {
+  if (!app.isPackaged) {
+    // Dev: use Vite dev server directly
+    createWindow(5173)
+    if (mainWindow) mainWindow.loadURL('http://localhost:5173')
+    return
+  }
 
-  protocol.handle('app', (request) => {
-    try {
-      const url = new URL(request.url)
-      // pathname looks like "/dist/assets/index-abc.js" or "/dist/index.html"
-      const relPath = url.pathname.replace(/^\//, '') // strip leading slash
-      const filePath = path.join(appRoot, relPath)
+  const distPath = path.join(app.getAppPath(), 'dist')
 
-      // SPA fallback: any unknown path → index.html
-      const target = fs.existsSync(filePath) ? filePath : path.join(appRoot, 'dist', 'index.html')
+  if (!fs.existsSync(distPath)) {
+    // dist missing — show error
+    const errWin = new BrowserWindow({ width: 800, height: 400, show: true })
+    errWin.loadURL(
+      `data:text/html,<body style="font-family:monospace;padding:32px;color:#c00;background:#fff">` +
+      `<h2>Fabegon ERP — dist not found</h2>` +
+      `<p>Expected: ${distPath}</p><p>Please reinstall.</p></body>`
+    )
+    return
+  }
 
-      // Use net.fetch with file:// URL — works because asar:false means real files
-      return net.fetch(pathToFileURL(target).toString())
-    } catch {
-      return new Response('Not found', { status: 404 })
-    }
-  })
-
-  createWindow()
+  try {
+    const port = await startServer(distPath)
+    createWindow(port)
+  } catch (err) {
+    const errWin = new BrowserWindow({ width: 800, height: 400, show: true })
+    errWin.loadURL(
+      `data:text/html,<body style="font-family:monospace;padding:32px;color:#c00;background:#fff">` +
+      `<h2>Fabegon ERP — server error</h2><p>${String(err)}</p></body>`
+    )
+  }
 })
 
 app.on('window-all-closed', () => {
+  staticServer?.close()
   if (process.platform !== 'darwin') app.quit()
 })
 
 app.on('activate', () => {
-  if (mainWindow === null) createWindow()
+  // On macOS re-create window if dock icon clicked
+  if (mainWindow === null && staticServer) {
+    const addr = staticServer.address() as { port: number } | null
+    if (addr) createWindow(addr.port)
+  }
 })
 
 ipcMain.handle('app-version', () => app.getVersion())
