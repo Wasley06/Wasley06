@@ -3,39 +3,63 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import path from 'node:path'
 
-// Strips crossorigin="anonymous" / crossorigin from every <script> and <link>
-// in the built HTML. Without this, Electron's Chromium enforces CORS on
-// ES-module scripts loaded via file://, blocking the app from mounting.
-const stripCrossOrigin = (): Plugin => ({
-  name: 'strip-crossorigin',
+// When building for Electron, convert the output HTML to use a plain <script>
+// tag (not type="module") so it loads from file:// without any CORS/ES-module
+// restrictions. The IIFE bundle has no dynamic imports so this is safe.
+const electronHtmlPlugin = (): Plugin => ({
+  name: 'electron-html',
   transformIndexHtml(html: string) {
-    return html.replace(/\s+crossorigin(?:="[^"]*")?/gi, '')
+    return html
+      // Remove module preloads — not needed for IIFE
+      .replace(/<link rel="modulepreload"[^>]*>\s*/gi, '')
+      // Change <script type="module" to plain <script
+      .replace(/<script type="module"/gi, '<script')
+      // Strip any crossorigin attributes
+      .replace(/\s+crossorigin(?:="[^"]*")?/gi, '')
   },
 })
 
+const isElectron = !!process.env.ELECTRON
+
 export default defineConfig({
-  base: process.env.ELECTRON ? './' : '/',
-  /* ── Build metadata — same values available in Figma Make dev mode ── */
+  base: './',   // always relative — works for both Electron file:// and Android
   define: {
-    __APP_VERSION__: JSON.stringify(process.env.npm_package_version ?? '1.0.9'),
-    __GIT_COMMIT__: JSON.stringify(process.env.VITE_GIT_COMMIT ?? 'local'),
-    __BUILD_DATE__: JSON.stringify(process.env.VITE_BUILD_DATE ?? new Date().toISOString().slice(0, 10)),
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version ?? '1.0.39'),
+    __GIT_COMMIT__:  JSON.stringify(process.env.VITE_GIT_COMMIT ?? 'local'),
+    __BUILD_DATE__:  JSON.stringify(new Date().toISOString().slice(0, 10)),
   },
   build: {
     outDir: 'dist',
     sourcemap: false,
     minify: true,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) return 'vendor'
-          if (id.includes('node_modules/recharts')) return 'charts'
-          if (id.includes('node_modules/@supabase')) return 'supabase'
+    // For Electron: single IIFE bundle — no ES modules, no dynamic imports,
+    // no CORS issues. Plain <script src="..."> loads from file:// perfectly.
+    // For web/Android: normal chunked ESM output.
+    ...(isElectron ? {
+      rollupOptions: {
+        output: {
+          format: 'iife' as const,
+          inlineDynamicImports: true,
+          entryFileNames: 'assets/[name]-[hash].js',
         },
       },
-    },
+    } : {
+      rollupOptions: {
+        output: {
+          manualChunks(id: string) {
+            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) return 'vendor'
+            if (id.includes('node_modules/recharts')) return 'charts'
+            if (id.includes('node_modules/@supabase')) return 'supabase'
+          },
+        },
+      },
+    }),
   },
-  plugins: [react(), tailwindcss(), ...(process.env.ELECTRON ? [stripCrossOrigin()] : [])],
+  plugins: [
+    react(),
+    tailwindcss(),
+    ...(isElectron ? [electronHtmlPlugin()] : []),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
