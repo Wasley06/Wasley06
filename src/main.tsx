@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 import './index.css'
-import { AppErrorBoundary, StartupError } from './components/StartupError'
+import { AppErrorBoundary } from './components/StartupError'
 
 function mount() {
   const rootEl = document.getElementById('root')
